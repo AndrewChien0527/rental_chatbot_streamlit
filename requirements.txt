@@ -4,3 +4,4 @@ transformers>=4.30.0
 joblib>=1.2.0
 torch>=1.13.1
 numpy>=1.23.0
+streamlit
