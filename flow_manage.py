@@ -1,4 +1,13 @@
 from typing import Dict, List
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from peft import PeftModel, PeftConfig
+
+# Load model and tokenizer
+base_model_name = "liswei/Taiwan-ELM-270M-Instruct"  # e.g., "meta-llama/Llama-2-7b-chat-hf"
+tokenizer = AutoTokenizer.from_pretrained("./lora_model")
+base_model = AutoModelForCausalLM.from_pretrained(base_model_name, device_map="auto", trust_remote_code=True)
+model = PeftModel.from_pretrained(base_model, "./lora_model")
+model.eval()
 
 chat_state = {
     "fb_post_info": {},          # 使用者貼文資訊（例如：地點、租金）
@@ -52,14 +61,19 @@ def construct_prompt_with_state(user_input: str):
 
     return prompt
 
-def gen_prompt(user_input):
-    return f"""[INST] <<SYS>>
+def gen_prompt(user_input, context=""):
+    return f'''[INST] <<SYS>>
 你是一個專業的法律助理，請根據提供的資訊回答問題。
+
+相關參考資料：
+{context}
 <</SYS>>
 
-{user_input} [/INST]"""
+{user_input} [/INST]'''
 
-def generate_response(model,tokenizer, prompt, max_new_tokens=128):
+
+
+def generate_response(prompt,model=model,tokenizer=tokenizer,  max_new_tokens=128):
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
     outputs = model.generate(
         **inputs,

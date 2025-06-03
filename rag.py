@@ -1,6 +1,7 @@
 from sentence_transformers import SentenceTransformer
-from sklearn.neighbors import NearestNeighbors
 import numpy as np
+import faiss
+import os
 
 # Load Q&A from file
 def load_qa_from_txt(filename):
@@ -26,34 +27,52 @@ def load_qa_from_txt(filename):
 
 # Load data
 qa_data = load_qa_from_txt("rental_qa.txt")
-
-# Embedding model
-embedding_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 questions = [item["question"] for item in qa_data]
-embeddings = embedding_model.encode(questions)
 
-# Create sklearn NearestNeighbors index
-nn_model = NearestNeighbors(n_neighbors=3, metric='euclidean')
-nn_model.fit(embeddings)
+# Load embedding model
+embedding_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 
-# RAG lookup function
+# Prepare embeddings
+embedding_path = "faiss_index.index"
+embedding_data_path = "qa_embeds.npy"
+
+if os.path.exists(embedding_path) and os.path.exists(embedding_data_path):
+    # Load existing index and embeddings
+    faiss_index = faiss.read_index(embedding_path)
+    embeddings = np.load(embedding_data_path)
+else:
+    # Encode and normalize embeddings (for cosine similarity)
+    embeddings = embedding_model.encode(questions, convert_to_numpy=True).astype("float32")
+    faiss.normalize_L2(embeddings)
+
+    # Create FAISS index for cosine similarity (use IndexFlatIP + normalized vectors)
+    dim = embeddings.shape[1]
+    faiss_index = faiss.IndexFlatIP(dim)
+    faiss_index.add(embeddings)
+
+    # Save for future use
+    faiss.write_index(faiss_index, embedding_path)
+    np.save(embedding_data_path, embeddings)
+
+# RAG lookup using FAISS
 def rag_lookup(user_input, top_k=3, threshold=0.6):
-    query_vec = embedding_model.encode([user_input])
-    distances, indices = nn_model.kneighbors(query_vec)
+    query_vec = embedding_model.encode([user_input], convert_to_numpy=True).astype("float32")
+    faiss.normalize_L2(query_vec)
+
+    # Search top_k results
+    similarities, indices = faiss_index.search(query_vec, top_k)
 
     results = []
     for i in range(top_k):
-        dist = distances[0][i]
+        sim = similarities[0][i]
         idx = indices[0][i]
-        if dist < threshold:  # Lower distance = more similar
+        if sim > threshold:  # Higher similarity = more relevant
             answer = qa_data[idx]["answer"]
-            results.append((answer, dist))
+            results.append((answer, sim))
 
-    # Return best match
     if results:
-        results.sort(key=lambda x: x[1])  # sort by distance (ascending)
+        results.sort(key=lambda x: -x[1])  # sort by similarity (descending)
         return results[0][0]
     else:
         return None
-
 

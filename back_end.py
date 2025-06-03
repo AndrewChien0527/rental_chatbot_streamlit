@@ -7,7 +7,7 @@ from flow_manage import update_state, construct_prompt_with_state, generate_resp
 from slot_extract import handle_rental_post
 
 # Initialize models and classifier once (do this outside the function!)
-model_name = "liswei/Taiwan-ELM-270M-Instruct"
+model_name =  "liswei/Taiwan-ELM-270M-Instruct"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForCausalLM.from_pretrained(model_name, trust_remote_code=True).eval()
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)

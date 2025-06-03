@@ -8,7 +8,7 @@ def load_slot_info(csv_path):
         for row in reader:
             slot = row['slot']
             slot_info[slot] = {
-                "regex": row['regex'],
+                "regex": str(row['regex']),
                 "advice": row['advice'],
                 "consequence": row['consequence']
             }
@@ -20,9 +20,11 @@ patterns = {slot: info["regex"] for slot, info in slot_info.items()}
 
 # Define required slots
 required_slots = list(slot_info.keys())
-def rule_based_extract(text):
+def rule_based_extract(text,patterns=patterns):
     result = {}
     for slot, pattern in patterns.items():
+        if not isinstance(pattern,str):
+            continue
         match = re.search(pattern, text)
         if match:
             if match.groupdict():

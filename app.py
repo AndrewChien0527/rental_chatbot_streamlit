@@ -1,6 +1,5 @@
 import streamlit as st
 from handlers.post_analysis import handle_post_analysis
-from handlers.landlord_negotiation import handle_landlord_negotiation
 from handlers.contract_checklist import handle_contract_checklist
 from handlers.tax_and_subsidy import handle_tax_and_subsidy
 from handlers.common_problems import handle_common_problem
@@ -26,9 +25,9 @@ for msg in st.session_state.messages:
 
 # 按鈕列表與對應回覆
 topics = {
-    "1️⃣ 幫我判斷貼文內容 / 聊天紀錄": handle_post_analysis,
-    "2️⃣ 教我如何應對房東的要求": handle_landlord_negotiation,
-    "3️⃣ 找房子要注意什麼？": lambda: add_chat("assistant", '''找房建議注意：交通、租金行情、房東身分、合約條款、押金規則，以及環境安全。🔍 一、房東與房屋的合法性
+    "幫我評估房屋資訊": handle_post_analysis,
+    "找房子要注意什麼？": lambda: add_chat("assistant", '''找房建議注意：交通、租金行情、房東身分、合約條款、押金規則，以及環境安全
+🔍 一、房東與房屋的合法性
 確認房東身分是否為房屋所有人
 可要求房東出示「房屋權狀」或「最近一期的房屋稅單」，確認他是否為登記所有人。
 
@@ -67,9 +66,9 @@ topics = {
 保留租屋對話紀錄（LINE、email、簡訊），日後如發生爭議有憑有據。
 
 若對租約條款不確定，可委託律師或向當地法律扶助基金會諮詢。'''),
-    "4️⃣ 租約簽訂前怎麼檢查？": handle_contract_checklist,
-    "5️⃣ 想了解補助、報稅、或法律資源": handle_tax_and_subsidy,
-    "6️⃣ 遇到問題怎麼處理？（水電、室友等）": handle_common_problem}
+    "租約簽訂前怎麼檢查？": handle_contract_checklist,
+    "想了解補助、報稅、或法律資源": handle_tax_and_subsidy,
+    "遇到問題怎麼處理？（水電、室友、房東等）": handle_common_problem}
 
 
 if "buttons_hidden" not in st.session_state:
