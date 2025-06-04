@@ -1,5 +1,5 @@
 import streamlit as st
-from slot_extract import rule_based_extract,slot_info
+from utils.slot_extract import rule_based_extract,slot_info
 
 def add_chat(role, content):
     with st.chat_message(role):

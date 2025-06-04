@@ -79,7 +79,7 @@ def generate_response(prompt,model=model,tokenizer=tokenizer,  max_new_tokens=12
         **inputs,
         max_new_tokens=max_new_tokens,
         do_sample=True,
-        temperature=0.5,
+        temperature=0.1,
         top_p=0.9,
         repetition_penalty=1.2,
         pad_token_id=tokenizer.eos_token_id

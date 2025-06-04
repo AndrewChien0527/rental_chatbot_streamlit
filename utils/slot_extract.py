@@ -15,7 +15,7 @@ def load_slot_info(csv_path):
     return slot_info
 
 # Usage
-slot_info = load_slot_info("slot.csv")
+slot_info = load_slot_info("data/slot.csv")
 patterns = {slot: info["regex"] for slot, info in slot_info.items()}
 
 # Define required slots

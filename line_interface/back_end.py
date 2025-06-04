@@ -2,9 +2,9 @@
 import joblib
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
-from rag import rag_lookup
-from flow_manage import update_state, construct_prompt_with_state, generate_response
-from slot_extract import handle_rental_post
+from utils.rag import rag_lookup
+from utils.flow_manage import update_state, construct_prompt_with_state, generate_response
+from utils.slot_extract import handle_rental_post
 
 # Initialize models and classifier once (do this outside the function!)
 model_name =  "liswei/Taiwan-ELM-270M-Instruct"

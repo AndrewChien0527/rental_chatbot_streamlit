@@ -3,9 +3,9 @@ from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import re
 from typing import Dict, List
-from rag import rag_lookup
-from flow_manage import update_state, construct_prompt_with_state, generate_response
-from slot_extract import handle_rental_post
+from utils.rag import rag_lookup
+from utils.flow_manage import update_state, construct_prompt_with_state, generate_response
+from utils.slot_extract import handle_rental_post
 
 def fallback_or_escalate(user_input):
     escalate_keywords = ["告", "法院", "仲介賠償", "律師", "法律責任"]#可在更動
