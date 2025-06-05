@@ -51,20 +51,29 @@ streamlit run app.py
 
 ```
 .
-├── app.py                  # Streamlit frontend
-├── main.py                 # Core logic dispatcher
-├── back_end.py             # Advice generation logic
-├── flow_manage.py          # Chat state & flow control
-├── classify.py             # Intent classification logic
-├── slot_extract.py         # Regex-based slot extraction
-├── rag.py                  # FAISS + RAG answer retrieval
-├── intent_classifier.pkl   # Pretrained classifier model
-├── faiss_index.index       # FAISS vector index
-├── qa_embeds.npy           # Embedded QA vectors
-├── rental_qa.txt           # Rental/legal QA knowledge base
-├── classify_data.csv       # Intent classifier training data
-├── slot.csv                # Slot extraction keyword list
-├── requirements.txt        # Python dependencies
+├── lora_modle/               #lora_modle
+├── data/
+│   ├── lora.txt              #lora & rag data
+│   ├── classify_data.csv     #train KNN classify data
+│   └── slot.csv              #slot data
+├── handlers/
+│   ├── common_handler.py     #main conversation module
+│   ├── post_analysis.py      #fb rental post analysis
+│   └── contract_checklist.py #contract tracker
+├── utils/
+│   ├── classify.py           #train KNN classifier for intent classsifaction
+│   ├── slot_extract.py       #extract data/value fron user input via regex
+│   ├── flow_manage.py        #conversation flow managing & prompt generation
+│   ├── lora_modle.py         #modify modle via lora
+│   ├── convert_csv.py        #converts slot.csv to dict format if you want to hardcode extraction
+│   └── rag.py                #rag embedding / searching / return
+├── line_interface/
+│   ├── main.py               #main CLI chatting interface
+│   └── backend.py            #chatting logic
+├── app.py                    #streamlit front end
+├── faiss_index.index
+├── qa_embeds.npy
+└── requirments.txt           #require installments to run this project
 ```
 
 ---
@@ -73,7 +82,7 @@ streamlit run app.py
 
 - Input a Facebook-style rental post → Get extracted info + advice
 - Ask general rental/legal questions → Get answers from QA base
-- Send incomplete info → Bot will follow up with specific questions
+- upload contract for quick risk overview
 - Use as a base for a full rental legal assistant
 
 ---

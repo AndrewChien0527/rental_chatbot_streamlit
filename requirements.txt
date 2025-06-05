@@ -8,3 +8,4 @@ streamlit
 pytesseract 
 pillow
 sentencepiece
+faiss
