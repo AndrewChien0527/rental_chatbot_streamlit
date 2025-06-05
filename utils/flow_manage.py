@@ -61,12 +61,13 @@ def construct_prompt_with_state(user_input: str):
 
     return prompt
 
-def gen_prompt(user_input, context=""):
+def gen_prompt(user_input, history="",context=""):
     return f'''[INST] <<SYS>>
 你是一個專業的法律助理，請根據提供的資訊回答問題。
 
-相關參考資料：
-{context}
+{"" if history== "" else "以下是用戶與助理之間的對話紀錄："+ history}
+
+{"" if context=="" else"相關參考資料："+context}
 <</SYS>>
 
 {user_input} [/INST]'''
@@ -79,7 +80,7 @@ def generate_response(prompt,model=model,tokenizer=tokenizer,  max_new_tokens=12
         **inputs,
         max_new_tokens=max_new_tokens,
         do_sample=True,
-        temperature=0.1,
+        temperature=0.5,
         top_p=0.9,
         repetition_penalty=1.2,
         pad_token_id=tokenizer.eos_token_id

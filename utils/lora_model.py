@@ -65,7 +65,7 @@ lora_config = LoraConfig(
 model = get_peft_model(model, lora_config)
 
 # Load and preprocess dataset
-data = load_qa_from_txt("rental_qa.txt")
+data = load_qa_from_txt("data/lora.txt")
 # Convert to Hugging Face Dataset
 dataset = Dataset.from_list(data)
 dataset = dataset.map(preprocess_qa)

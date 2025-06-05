@@ -7,9 +7,21 @@ def add_chat(role, content):
     with st.chat_message(role):
         st.markdown(content)
     st.session_state.messages.append({"role": role, "content": content})
+# utils/conversation.py
 
 
-def handle_common_problem():
+
+def build_history(user_input, context=""):
+    messages = st.session_state.get("messages", [])
+    history_text = ""
+    for msg in messages:
+        role = "使用者" if msg["role"] == "user" else "助理"
+        history_text += f"{role}：{msg['content']}\n"
+    return history_text
+   
+
+
+def handle_common_problem(intro_msg = "請描述你遇到的問題，我會提供可能處理方式，例如申訴單位、法律依據或溝通技巧。"):
     # Initialize session state once
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -30,7 +42,7 @@ def handle_common_problem():
     '''
     # Show the intro message only once
     if not st.session_state.intro_shown:
-        intro_msg = "請描述你遇到的問題，我會提供可能處理方式，例如申訴單位、法律依據或溝通技巧。"
+        intro_msg = intro_msg
         add_chat("assistant", intro_msg)
         st.session_state.intro_shown = True
 
@@ -42,12 +54,12 @@ def handle_common_problem():
         try:
             with st.spinner("思考中..."):
                 # Do RAG retrieval
-                context = rag_lookup(user_text, top_k=3, threshold=0.1)
+                context = rag_lookup(user_text, top_k=3, threshold=0.5)
                 if not context:
-                    context = "（無相關資料）"
+                    context = ""
 
                 # Generate prompt + response
-                prompt = gen_prompt(user_text, context=context)
+                prompt = gen_prompt(user_text,history=build_history(), context=context)
                 answer = generate_response(prompt)
 
             # Display answer

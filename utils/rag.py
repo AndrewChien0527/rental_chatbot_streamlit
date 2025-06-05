@@ -26,7 +26,7 @@ def load_qa_from_txt(filename):
     return qa_data
 
 # Load data
-qa_data = load_qa_from_txt("data/rental_qa.txt")
+qa_data = load_qa_from_txt("data/lora.txt")
 questions = [item["question"] for item in qa_data]
 
 # Load embedding model
