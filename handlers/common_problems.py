@@ -49,7 +49,7 @@ def handle_common_problem(intro_msg = "請描述你遇到的問題，我會提�
         try:
             with st.spinner("思考中..."):
                 # Do RAG retrieval
-                context = rag_lookup(user_text, top_k=1, threshold=0.1)
+                context = rag_lookup(user_text, top_k=3, threshold=0.3)
                 if not context:
                     context = ""
 
@@ -59,7 +59,7 @@ def handle_common_problem(intro_msg = "請描述你遇到的問題，我會提�
                 answer = generate_response(prompt)
 
             # Display answer
-            add_chat("assistant",context)# answer+"/n"+ prompt)
+            add_chat("assistant",answer)# answer+"/n"+ prompt)
 
         except Exception as e:
             add_chat("assistant", f"⚠️ 發生錯誤：{str(e)}")
