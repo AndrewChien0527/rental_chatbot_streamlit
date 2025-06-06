@@ -17,7 +17,7 @@ def load_slot_info(csv_path):
 # Usage
 slot_info = {
     "地址": {
-        "regex": r"(地址|地點|位置)[:：]\s*([^\n\r]+)",
+        "regex": r"(地址|位置|地點)[:：]\s*([^\n\r]+)",
         "advice": "請補上詳細地址，例如「台北市大安區信義路三段123號」。",
         "consequence": "無法評估地段、比價、生活機能或治安風險。",
         "show": "1",
@@ -38,7 +38,7 @@ slot_info = {
         "regex": r"(樓層|樓層數|層數)[:：]\s*([^\n\r]+)",
         "advice": "請問所在樓層為何？例如「5樓/共12樓」。",
         "consequence": "無法評估通風、日照、噪音或逃生風險。",
-        "show": "1",
+        "show": "0",
     },
     "租金": {
         "regex": r"(租金|房租|租費)[:：]\s*([^\n\r]+)",
@@ -52,14 +52,21 @@ slot_info = {
         "consequence": "可能另有隱藏費用，影響實際支出。",
         "show": "1",
     },
+    "押金": {
+    "regex": r"(押金|保證金)[:：]?\s*([^\n\r]+)",
+    "advice": "請提供押金金額，例如「兩個月」、「36000元」等。",
+    "consequence": "未明確押金可能導致誤解或糾紛。",
+    "show": "1",
+},
+
     "管理費": {
         "regex": r"(管理費|管理費用|管理費用)[:：]\s*([^\n\r]+)",
         "advice": "請問管理費多少？或是否已包含在租金內？",
         "consequence": "忽略額外支出，導致誤判總成本。",
-        "show": "1",
+        "show": "0",
     },
     "帳單": {
-        "regex": r"(水費|電費|帳單)[:：]\s*([^\n\r]+)",
+        "regex": r"(水費|電費|帳單|台水|台電)[:：]\s*([^\n\r]+)",
         "advice": "水電費怎麼算？依帳單、均分還是定額？",
         "consequence": "可能產生爭議或額外負擔。",
         "show": "1",
@@ -86,13 +93,13 @@ slot_info = {
         "regex": r"(寵物|養寵物|可養寵物)[:：]\s*([^\n\r]+)",
         "advice": "是否可養寵物？例如「可養貓狗」、「不可養寵物」。",
         "consequence": "飼主未確認可能導致違約或被趕出。",
-        "show": "1",
+        "show": "0",
     },
     "禁菸": {
         "regex": r"(禁菸|禁煙|是否禁菸)[:：]?\s*([^\n\r]+)?",
         "advice": "是否禁菸？",
         "consequence": "吸菸者未問明可能違反規定，非吸菸者可能擔憂空氣品質。",
-        "show": "1",
+        "show": "0",
     },
     "建案": {
         "regex": r"(建案|社區|建案名稱)[:：]\s*([^\n\r]+)",
@@ -110,7 +117,7 @@ slot_info = {
         "regex": r"(飲水機|提供飲水機)[:：]\s*([^\n\r]+)",
         "advice": "是否提供飲水機？",
         "consequence": "無法得知是否需自備飲水設備，可能影響日常生活便利性與成本。",
-        "show": "1",
+        "show": "0",
     },
     "曬衣空間": {
         "regex": r"(曬衣空間|晾衣空間|曬衣場)[:：]\s*([^\n\r]+)",
@@ -128,37 +135,37 @@ slot_info = {
         "regex": r"(垃圾處理|垃圾回收|垃圾處理方式)[:：]\s*([^\n\r]+)",
         "advice": "如何處理垃圾回收？例如：子母車、代收、自行處理等。",
         "consequence": "無法掌握垃圾處理機制，可能增加生活困擾。",
-        "show": "1",
+        "show": "0",
     },
     "對外窗": {
         "regex": r"(對外窗|窗戶|外窗)[:：]\s*([^\n\r]+)",
         "advice": "是否有對外窗？",
         "consequence": "無窗或採光不足會影響通風與心情，可能導致發霉或潮濕問題。",
-        "show": "1",
+        "show": "0",
     },
     "廚房": {
         "regex": r"(廚房|烹飪區|廚房設備)[:：]\s*([^\n\r]+)",
         "advice": "有無廚房？是否可開火或使用電磁爐？",
         "consequence": "無廚房或禁火限制恐影響日常飲食安排。1",
-        "show": "",
+        "show": "0",
     },
     "設籍報稅": {
         "regex": r"(設籍|報稅|設籍報稅)[:：]\s*([^\n\r]+)",
         "advice": "是否可報稅設籍？是否為合法建物？",
         "consequence": "無法報稅或設籍會影響補助、學區、居留等權益，也可能涉違建。",
-        "show": "1",
+        "show": "0",
     },
     "家具": {
         "regex": r"(家具|傢俱|家具設備)[:：]\s*([^\n\r]+)",
         "advice": "是否有基本家具？例如床、衣櫃、書桌等",
         "consequence": "缺乏家具需自備，會增加初期搬遷成本與不便。",
-        "show": "1",
+        "show": "0",
     },
     "租期條件": {
         "regex": r"(租期條件|租約條件|租期)[:：]\s*([^\n\r]+)",
         "advice": "最短租期與提前解約條件為何？",
         "consequence": "無法彈性調整生活規劃，亦可能面臨解約違約金。",
-        "show": "1",
+        "show": "0",
     },
     "安全設備": {
         "regex": r"(安全設備|消防設備|安全裝置)[:：]\s*([^\n\r]+)",
@@ -172,25 +179,30 @@ slot_info = {
         "consequence": "共用網路可能不穩定，影響工作與生活品質。",
         "show": "0",
     },
+    "聯絡方式": {
+        "regex": r"(電話|聯絡方式|Line|連絡電話)[:：]\s*([^\n\r]+)",
+        "advice": "網路速度與提供方式？為共用或獨立？",
+        "consequence": "共用網路可能不穩定，影響工作與生活品質。",
+        "show": "0",
+    },
 }
 patterns = {slot: info["regex"] for slot, info in slot_info.items()}
 
 # Define required slots
 required_slots = list(slot_info.keys())
-def rule_based_extract(text,patterns=patterns):
+
+def rule_based_extract(text, patterns=patterns):
     result = {}
     for slot, pattern in patterns.items():
-        if not isinstance(pattern,str):
-            continue
-        match = re.search(pattern, text)
-        if match:
-            if match.groupdict():
-                result[slot] = {k: v for k, v in match.groupdict().items() if v}
-            elif match.lastindex:
-                result[slot] = match.group(match.lastindex).strip()
+        try:
+            match = re.search(pattern, text, re.MULTILINE | re.IGNORECASE | re.UNICODE)
+            if match:
+                val = match.group(match.lastindex).strip() if match.lastindex else match.group(0).strip()
+                result[slot] = val
             else:
-                result[slot] = True
-        else:
+                result[slot] = "無"
+        except Exception as e:
+            print(f"Error for slot {slot}: {e}")
             result[slot] = "無"
     return result
 def handle_rental_post(text):

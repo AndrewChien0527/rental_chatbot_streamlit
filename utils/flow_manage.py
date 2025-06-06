@@ -7,6 +7,8 @@ base_model_name = "liswei/Taiwan-ELM-270M-Instruct"  # e.g., "meta-llama/Llama-2
 tokenizer = AutoTokenizer.from_pretrained("./lora_model")
 base_model = AutoModelForCausalLM.from_pretrained(base_model_name, device_map="auto", trust_remote_code=True)
 model = PeftModel.from_pretrained(base_model, "./lora_model")
+#tokenizer = AutoTokenizer.from_pretrained("AiCloser/Qwen2.5-0.5B-Instruct-Thinking")
+#model = AutoModelForCausalLM.from_pretrained("AiCloser/Qwen2.5-0.5B-Instruct-Thinking", device_map="auto")
 model.eval()
 
 chat_state = {
@@ -72,6 +74,28 @@ def gen_prompt(user_input, history="",context=""):
 
 {user_input} [/INST]'''
 
+def gen_prompt1(user_input, history="", context="", system="你是熟悉台灣租屋契約與法律的助理，請根據資訊清楚回答使用者問題。"):
+    think_parts = []
+
+    if context:
+        think_parts.append(f"參考資料：\n{context.strip()}")
+    if history:
+        think_parts.append(f"歷史對話：\n{history.strip()}")
+
+    full_think = "\n\n".join(think_parts) if think_parts else ""
+
+    prompt = f"""<|im_start|>system
+{system}<|im_end|>
+<|im_start|>user
+{user_input}<|im_end|>
+<|im_start|>assistant
+"""
+
+    if full_think:
+        prompt += f"<think>\n{full_think}\n</think>\n"
+
+    return prompt
+
 
 
 def generate_response(prompt,model=model,tokenizer=tokenizer,  max_new_tokens=128):
@@ -80,7 +104,21 @@ def generate_response(prompt,model=model,tokenizer=tokenizer,  max_new_tokens=12
         **inputs,
         max_new_tokens=max_new_tokens,
         do_sample=True,
-        temperature=0.5,
+        temperature=0.8,
+        top_p=0.9,
+        repetition_penalty=1.2,
+        pad_token_id=tokenizer.eos_token_id
+    )
+    result = tokenizer.decode(outputs[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True)
+    return result.strip()
+
+def generate_response1(prompt, model=model, tokenizer=tokenizer, max_new_tokens=128):
+    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+    outputs = model.generate(
+        **inputs,
+        max_new_tokens=max_new_tokens,
+        do_sample=True,
+        temperature=0.8,
         top_p=0.9,
         repetition_penalty=1.2,
         pad_token_id=tokenizer.eos_token_id
