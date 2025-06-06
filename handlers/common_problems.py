@@ -49,18 +49,16 @@ def handle_common_problem(intro_msg = "請描述你遇到的問題，我會提�
         try:
             with st.spinner("思考中..."):
                 # Do RAG retrieval
-                context = rag_lookup(user_text, top_k=1, threshold=0.9)
-                if not context:
+                answer = rag_lookup(user_text, top_k=1, threshold=0.9)
+                if not answer:
                     context = rag_lookup(user_text, top_k=3, threshold=0.1)
                     if not context:
                         context=""
+                    prompt = gen_prompt(user_text,history, context=context)
+
+                    answer = generate_response(prompt)
+
                 
-
-                # Generate prompt + response
-                prompt = gen_prompt(user_text,history, context=context)
-
-                answer = generate_response(prompt)
-
             # Display answer
             add_chat("assistant",answer)# answer+"/n"+ prompt)
 

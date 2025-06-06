@@ -9,3 +9,9 @@ pytesseract
 pillow
 sentencepiece
 faiss
+easyocr
+re
+fitz
+pandas
+csv
+peft
