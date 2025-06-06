@@ -49,9 +49,12 @@ def handle_common_problem(intro_msg = "請描述你遇到的問題，我會提�
         try:
             with st.spinner("思考中..."):
                 # Do RAG retrieval
-                context = rag_lookup(user_text, top_k=3, threshold=0.3)
+                context = rag_lookup(user_text, top_k=1, threshold=0.9)
                 if not context:
-                    context = ""
+                    context = rag_lookup(user_text, top_k=3, threshold=0.1)
+                    if not context:
+                        context=""
+                
 
                 # Generate prompt + response
                 prompt = gen_prompt(user_text,history, context=context)
